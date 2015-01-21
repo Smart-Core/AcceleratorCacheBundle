@@ -15,9 +15,10 @@ class ScriptHandler extends SymfonyScriptHandler
     public static function clearCache(CommandEvent $event)
     {
         $options = parent::getOptions($event);
-        $consoleDir = parent::getConsoleDir($event, 'clear the PHP Accelerator cache');
+        //$consoleDir = parent::getConsoleDir($event, 'clear the PHP Accelerator cache');
+        $appDir = $options['symfony-app-dir'];
 
-        if (null === $consoleDir) {
+        if (null === $appDir) {
             return;
         }
 
@@ -41,6 +42,6 @@ class ScriptHandler extends SymfonyScriptHandler
             $auth .= ' --auth '.  escapeshellarg($options['accelerator-cache-auth']);
         }
 
-        static::executeCommand($event, $consoleDir, 'cache:accelerator:clear'.$opcode.$user.$cli.$auth, $options['process-timeout']);
+        static::executeCommand($event, $appDir, 'cache:accelerator:clear'.$opcode.$user.$cli.$auth, $options['process-timeout']);
     }
 }
