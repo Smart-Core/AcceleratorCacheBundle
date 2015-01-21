@@ -1,9 +1,9 @@
 {
-    "name": "ornicar/apc-bundle",
+    "name":        "smart-core/accelerator-cache-bundle",
     "type":        "symfony-bundle",
-    "description": "Provides a command line task to clear APC cache from the console",
-    "keywords":    ["apc", "task"],
-    "homepage":    "https://github.com/ornicar/ApcBundle",
+    "description": "Provides a command line task to clear PHP Accelerators cache from the console",
+    "keywords":    ["apc", "task", "opcache", "wincache"],
+    "homepage":    "https://github.com/Smart-Core/AcceleratorCacheBundle",
     "license":     "MIT",
     "authors": [
         {
@@ -12,11 +12,12 @@
         },
         {
             "name": "Contributors",
-            "homepage": "https://github.com/ornicar/ApcBundle/contributors"
+            "homepage": "https://github.com/Smart-Core/AcceleratorCacheBundle/contributors"
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.1,<3.0"
+        "php": ">=5.4.1",
+        "symfony/framework-bundle": ">=2.1"
     },
     "extra": {
         "branch-alias": {
@@ -25,9 +26,8 @@
         }
     },
     "autoload": {
-        "psr-0": {
-            "Ornicar\\ApcBundle": ""
+        "psr-4": {
+            "SmartCore\\Bundle\\AcceleratorCacheBundle": ""
         }
-    },
-    "target-dir": "Ornicar/ApcBundle"
+    }
 }

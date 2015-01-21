@@ -1,12 +1,12 @@
 <?php
 
-namespace Ornicar\ApcBundle\DependencyInjection;
+namespace SmartCore\Bundle\AcceleratorCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OrnicarApcExtension extends Extension
+class AcceleratorCacheExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -16,8 +16,8 @@ class OrnicarApcExtension extends Extension
         if ($config['host'] && strncmp($config['host'], 'http', 4) !== 0) {
             $config['host'] = 'http://'.$config['host'];
         }
-        $container->setParameter('ornicar_apc.host', $config['host'] ? trim($config['host'], '/') : false);
-        $container->setParameter('ornicar_apc.web_dir', $config['web_dir']);
-        $container->setParameter('ornicar_apc.mode', $config['mode']);
+        $container->setParameter('accelerator_cache.host', $config['host'] ? trim($config['host'], '/') : false);
+        $container->setParameter('accelerator_cache.web_dir', $config['web_dir']);
+        $container->setParameter('accelerator_cache.mode', $config['mode']);
     }
 }

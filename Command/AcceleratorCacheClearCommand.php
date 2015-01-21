@@ -1,6 +1,6 @@
 <?php
 
-namespace Ornicar\ApcBundle\Command;
+namespace SmartCore\Bundle\AcceleratorCacheBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Loads initial data
  */
-class ApcClearCommand extends ContainerAwareCommand
+class AcceleratorCacheClearCommand extends ContainerAwareCommand
 {
     /**
      * @see Command
@@ -18,12 +18,13 @@ class ApcClearCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setDefinition(array())
+            ->setName('cache:accelerator:clear')
+            ->setDescription('Clears PHP Accelerator opcode and user caches.')
+            ->setDefinition([])
             ->addOption('opcode', null, InputOption::VALUE_NONE, 'Clear only opcode cache')
             ->addOption('user', null, InputOption::VALUE_NONE, 'Clear only user cache')
             ->addOption('cli', null, InputOption::VALUE_NONE, 'Only clear the cache via the CLI')
             ->addOption('auth', null, InputOption::VALUE_REQUIRED, 'HTTP authentication as username:password')
-            ->setName('apc:clear')
         ;
     }
 
@@ -48,44 +49,47 @@ class ApcClearCommand extends ContainerAwareCommand
             return;
         }
 
-        $webDir = $this->getContainer()->getParameter('ornicar_apc.web_dir');
+        $webDir = $this->getContainer()->getParameter('accelerator_cache.web_dir');
+
         if (!is_dir($webDir)) {
             throw new \InvalidArgumentException(sprintf('Web dir does not exist "%s"', $webDir));
         }
+
         if (!is_writable($webDir)) {
             throw new \InvalidArgumentException(sprintf('Web dir is not writable "%s"', $webDir));
         }
+
         $filename = 'apc-'.md5(uniqid().mt_rand(0, 9999999).php_uname()).'.php';
         $file = $webDir.'/'.$filename;
 
         $templateFile = __DIR__.'/../Resources/template.tpl';
         $template = file_get_contents($templateFile);
-        $code = strtr($template, array(
+        $code = strtr($template, [
             '%user%' => var_export($clearUser, true),
             '%opcode%' => var_export($clearOpcode, true)
-        ));
+        ]);
 
         if (false === @file_put_contents($file, $code)) {
             throw new \RuntimeException(sprintf('Unable to write "%s"', $file));
         }
 
-        if (!$host = $this->getContainer()->getParameter('ornicar_apc.host')) {
+        if (!$host = $this->getContainer()->getParameter('accelerator_cache.host')) {
             $host = sprintf("%s://%s", $this->getContainer()->getParameter('router.request_context.scheme'), $this->getContainer()->getParameter('router.request_context.host'));
         }
 
         $url = $host.'/'.$filename;
         $auth = $input->getOption('auth');
 
-        if ($this->getContainer()->getParameter('ornicar_apc.mode') == 'fopen') {
+        if ($this->getContainer()->getParameter('accelerator_cache.mode') == 'fopen') {
             $context = null;
             if (false === is_null($auth)) {
-                $context = stream_context_create(array('http' => array(
+                $context = stream_context_create(['http' => [
                     'header' => 'Authorization: Basic ' . base64_encode($auth),
-                )));
+                ]]);
             }
 
             $result = false;
-            for ($i = 0; $i<5; $i++){
+            for ($i = 0; $i < 5; $i++) {
                 if ($result = @file_get_contents($url, false, $context)) {
                     break;
                 } else {
@@ -100,11 +104,11 @@ class ApcClearCommand extends ContainerAwareCommand
         }
         else {
             $ch = curl_init($url);
-            curl_setopt_array($ch, array(
+            curl_setopt_array($ch, [
                 CURLOPT_HEADER => false,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_FAILONERROR => true
-            ));
+            ]);
 
             if (false === is_null($auth)) {
                 curl_setopt($ch, CURLOPT_USERPWD, $auth);
@@ -125,9 +129,9 @@ class ApcClearCommand extends ContainerAwareCommand
         unlink($file);
 
         if($result['success']) {
-            $output->writeln('Web: '.$result['message'].". Reset attempts: ".(empty($i) ? 1 : $i+1).".");
+            $output->writeln('Web: '.$result['message']." Reset attempts: ".(empty($i) ? 1 : $i+1).'.');
         } else {
-            $output->writeln('APC Cache clear status: failure.');
+            $output->writeln('Accelerator Cache clear status: failure.');
         }
     }
 
@@ -139,9 +143,11 @@ class ApcClearCommand extends ContainerAwareCommand
         if (function_exists('apc_clear_cache')) {
             if ($clearUser) {
                 if (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '>=') && apc_clear_cache()) {
-                    $message .= ' User Cache: success';
+                    $message .= ' APC User Cache: success.';
                 } elseif (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '<') && apc_clear_cache('user')) {
-                    $message .= ' User Cache: success';
+                    $message .= ' APC User Cache: success.';
+                } elseif (function_exists('wincache_ucache_clear') && wincache_ucache_clear()) {
+                    $message .= ' Wincache User Cache: success.';
                 } else {
                     $success = false;
                     $message .= ' User Cache: failure';
@@ -150,17 +156,17 @@ class ApcClearCommand extends ContainerAwareCommand
 
             if ($clearOpcode) {
                 if (function_exists('opcache_reset') && opcache_reset()) {
-                    $message .= ' Opcode Cache: success';
+                    $message .= ' Zend OPcache Opcode Cache: success.';
                 } elseif (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '<') && apc_clear_cache('opcode')) {
-                    $message .= ' Opcode Cache: success';
+                    $message .= ' APC Opcode Cache: success.';
                 }
                 else {
                     $success = false;
-                    $message .= ' Opcode Cache: failure';
+                    $message .= ' Opcode Cache: failure.';
                 }
             }
         }
 
-        return array('success' => $success, 'message' => $message);
+        return ['success' => $success, 'message' => $message];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ornicar\ApcBundle\DependencyInjection;
+namespace SmartCore\Bundle\AcceleratorCacheBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -19,7 +19,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ornicar_apc');
+        $rootNode = $treeBuilder->root('accelerator_cache');
 
         $rootNode
             ->children()

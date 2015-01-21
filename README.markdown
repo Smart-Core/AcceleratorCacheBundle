@@ -1,6 +1,6 @@
-Provide a command line to clear APC cache from the console.
+Provide a command line to clear PHP Accelerator cache from the console.
 
-The problem with APC is that it's impossible to clear it from command line.
+The problem with Accelerator cache (like APC, Wincache, Opcache) is that it's impossible to clear it from command line.
 Because even if you enable APC for PHP CLI, it's a different instance than,
 say, your Apache PHP or PHP-CGI APC instance.
 
@@ -20,66 +20,120 @@ Installation
 
   1. Add it to your composer.json:
 
-      ```json
-      {
-          "require": {
-              "ornicar/apc-bundle": "1.0.*"
-          }
+    ```json
+    {
+      "require": {
+          "smart-core/accelerator-cache-bundle": "dev-master"
       }
-      ```
+    }
+    ```
 
-     or:
+    or:
 
-      ```sh
-          composer require ornicar/apc-bundle
-          composer update ornicar/apc-bundle
-      ```
+    ```sh
+      composer require smart-core/accelerator-cache-bundle
+      composer update smart-core/accelerator-cache-bundle
+    ```
 
   2. Add this bundle to your application kernel:
 
-          // app/AppKernel.php
-          public function registerBundles()
-          {
-              return array(
-                  // ...
-                  new Ornicar\ApcBundle\OrnicarApcBundle(),
-                  // ...
-              );
-          }
+    ```php
+     // app/AppKernel.php
+     public function registerBundles()
+     {
+         return array(
+             // ...
+             new SmartCore\Bundle\AcceleratorCacheBundle\AcceleratorCacheBundle(),
+             // ...
+         );
+     }
+    ```
 
-  3. Configure `ornicar_apc` service:
+  3. Configure `accelerator_cache` service:
 
-          # app/config/config.yml
-          ornicar_apc:
-              host: http://example.com
-              web_dir: %kernel.root_dir%/../web
+    ```yml
+    # app/config/config.yml
+    accelerator_cache:
+        host: http://example.com
+        web_dir: %kernel.root_dir%/../web
+    ```
 
   4. If you want to use curl rather than fopen set the following option:
 
-          # app/config/config.yml
-          ornicar_apc:
-              ...
-              mode: curl
-
+    ```yml
+    # app/config/config.yml
+    accelerator_cache:
+        ...
+        mode: curl
+    ```
 
 Usage
 =====
 
-Clear all APC cache (opcode+user):
+Clear all Accelerator cache (opcode+user):
 
-          $ php app/console apc:clear
+    $ php app/console cache:accelerator:clear
 
 Clear only opcode cache:
 
-          $ php app/console apc:clear --opcode
+    $ php app/console cache:accelerator:clear --opcode
 
 Clear only user cache:
 
-          $ php app/console apc:clear --user
+    $ php app/console cache:accelerator:clear --user
 
 Clear the CLI cache (opcode+user):
 
-          $ php app/console apc:clear --cli
+    $ php app/console cache:accelerator:clear --cli
+
+
+Composer usage
++==============
+
+To automatically clear accelerator cache after each composer install / composer update, you can add a script handler to your project's composer.json :
+
+```json
+        "post-install-cmd": [
+            "SmartCore\\Bundle\\AcceleratorCacheBundle\\Composer\\ScriptHandler::clearCache"
+        ],
+        "post-update-cmd": [
+            "SmartCore\\Bundle\\AcceleratorCacheBundle\\Composer\\ScriptHandler::clearCache"
+        ]
+```
+
++You can specify command arguments in the `extra` section:
+
+- `--opcode` (to clean only opcode cache):
+
+```json
+        "extra": {
+          "accelerator-cache-opcode": "yes"
+        }
+```
+
+- `--user` (to clean only user cache):
+
+```json
+        "extra": {
+          "accelerator-cache-user": "yes"
+        }
+```
+
+- `--cli` (to only clear cache via the CLI):
+
+```json
+        "extra": {
+          "accelerator-cache-cli": "yes"
+        }
+```
+
+- `--auth` (HTTP authentification):
+
+```json
+        "extra": {
+          "accelerator-cache-auth": "username:password"
+        }
+```
 
 
 Capifony usage
@@ -89,10 +143,10 @@ To automatically clear apc cache after each capifony deploy you can define a cus
 
 ```ruby
 namespace :symfony do
-  desc "Clear apc cache"
-  task :clear_apc do
-    capifony_pretty_print "--> Clear apc cache"
-    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} apc:clear #{console_options}'"
+  desc "Clear accelerator cache"
+  task :clear_accelerator_cache do
+    capifony_pretty_print "--> Clear accelerator cache"
+    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:accelerator:clear #{console_options}'"
     capifony_puts_ok
   end
 end
@@ -101,22 +155,22 @@ end
 and add these hooks
 
 ```ruby
-# apc
-after "deploy", "symfony:clear_apc"
-after "deploy:rollback:cleanup", "symfony:clear_apc"
+# clear accelerator cache
+after "deploy", "symfony:clear_accelerator_cache"
+after "deploy:rollback:cleanup", "symfony:clear_accelerator_cache"
 ```
 
 Nginx configuration
 ===================
 
-If you are using nginx and limiting PHP scripts that you are passing to fpm you need to allow 'apc' prefixed php files. Otherwise your web server will return the requested PHP file as text and the system won't be able to clear the apc cache.
+If you are using nginx and limiting PHP scripts that you are passing to fpm you need to allow 'apc' prefixed php files. Otherwise your web server will return the requested PHP file as text and the system won't be able to clear the accelerator cache.
 
 Example configuration:
 ```
 # Your virtual host
 server {
   ...
-  location ~ ^/(app|app_dev|apc-.*)\.php(/|$) { { # This will allow apc (apc-{MD5HASH}.php) files to be processed by fpm
+  location ~ ^/(app|app_dev|apc-.*)\.php(/|$) { { # This will allow accelerator cache (apc-{MD5HASH}.php) files to be processed by fpm
     fastcgi_pass                127.0.0.1:9000;
     ...
 ``` 
