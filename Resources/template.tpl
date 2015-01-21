@@ -17,7 +17,7 @@ if(%user%) {
 
 if(%opcode%) {
     if (function_exists('opcache_reset') && opcache_reset()) {
-        $message .= ' Zend OPcache Opcode Cache: success.';
+        $message .= ' Zend OPcache: success.';
     } elseif (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '<') && apc_clear_cache('opcode')) {
         $message .= ' APC Opcode Cache: success.';
     } else {
