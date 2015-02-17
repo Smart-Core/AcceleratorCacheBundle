@@ -19,5 +19,11 @@ class AcceleratorCacheExtension extends Extension
         $container->setParameter('accelerator_cache.host', $config['host'] ? trim($config['host'], '/') : false);
         $container->setParameter('accelerator_cache.web_dir', $config['web_dir']);
         $container->setParameter('accelerator_cache.mode', $config['mode']);
+
+        $curlOpts = array();
+        foreach ($config['curl_opts'] as $name => $value) {
+            $curlOpts[constant($name)] = $value;
+        }
+        $container->setParameter('accelerator_cache.curl_opts', $curlOpts);
     }
 }

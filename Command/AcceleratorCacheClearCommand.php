@@ -49,7 +49,9 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             return;
         }
 
-        $webDir = $this->getContainer()->getParameter('accelerator_cache.web_dir');
+        $container = $this->getContainer();
+
+        $webDir = $container->getParameter('accelerator_cache.web_dir');
 
         if (!is_dir($webDir)) {
             throw new \InvalidArgumentException(sprintf('Web dir does not exist "%s"', $webDir));
@@ -73,14 +75,14 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             throw new \RuntimeException(sprintf('Unable to write "%s"', $file));
         }
 
-        if (!$host = $this->getContainer()->getParameter('accelerator_cache.host')) {
-            $host = sprintf("%s://%s", $this->getContainer()->getParameter('router.request_context.scheme'), $this->getContainer()->getParameter('router.request_context.host'));
+        if (!$host = $container->getParameter('accelerator_cache.host')) {
+            $host = sprintf("%s://%s", $container->getParameter('router.request_context.scheme'), $container->getParameter('router.request_context.host'));
         }
 
         $url = $host.'/'.$filename;
         $auth = $input->getOption('auth');
 
-        if ($this->getContainer()->getParameter('accelerator_cache.mode') == 'fopen') {
+        if ($container->getParameter('accelerator_cache.mode') == 'fopen') {
             $context = null;
             if (false === is_null($auth)) {
                 $context = stream_context_create(['http' => [
@@ -104,11 +106,13 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
         }
         else {
             $ch = curl_init($url);
-            curl_setopt_array($ch, [
+
+            $curlOpts = $container->getParameter('accelerator_cache.curl_opts');
+            curl_setopt_array($ch, array_replace($curlOpts, [
                 CURLOPT_HEADER => false,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_FAILONERROR => true
-            ]);
+            ]));
 
             if (false === is_null($auth)) {
                 curl_setopt($ch, CURLOPT_USERPWD, $auth);
