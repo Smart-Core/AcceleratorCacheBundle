@@ -65,6 +65,10 @@ Installation
     accelerator_cache:
         ...
         mode: curl
+    #   additional options can be passed to the command
+    #   curl_opts:
+    #       CURLOPT_*: custom_value
+
     ```
 
 Usage
