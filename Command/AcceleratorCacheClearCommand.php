@@ -71,9 +71,15 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             '%opcode%' => var_export($clearOpcode, true)
         ]);
 
-        if (false === @file_put_contents($file, $code)) {
-            throw new \RuntimeException(sprintf('Unable to write "%s"', $file));
+        if (!is_writable($file)) {
+            throw new \RuntimeException(sprintf('"%s" is not writable', $file));
         }
+        $fH = fopen($file, 'w+');
+        if ($fH === false) {
+            throw new \RuntimeException(sprintf('Can\'t open "%s"', $file));
+        }
+        fwrite($fH, $code);
+        fclose($fH);
 
         if (!$host = $container->getParameter('accelerator_cache.host')) {
             $host = sprintf("%s://%s", $container->getParameter('router.request_context.scheme'), $container->getParameter('router.request_context.host'));
