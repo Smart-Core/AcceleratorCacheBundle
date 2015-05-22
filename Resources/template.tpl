@@ -26,4 +26,4 @@ if(%opcode%) {
     }
 }
 
-die(json_encode(['success' => $success, 'message' => $message]));
+die(json_encode(array('success' => $success, 'message' => $message)));
