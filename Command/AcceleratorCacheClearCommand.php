@@ -20,7 +20,7 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
         $this
             ->setName('cache:accelerator:clear')
             ->setDescription('Clears PHP Accelerator opcode and user caches.')
-            ->setDefinition([])
+            ->setDefinition(array())
             ->addOption('opcode', null, InputOption::VALUE_NONE, 'Clear only opcode cache')
             ->addOption('user', null, InputOption::VALUE_NONE, 'Clear only user cache')
             ->addOption('cli', null, InputOption::VALUE_NONE, 'Only clear the cache via the CLI')
@@ -66,10 +66,10 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
 
         $templateFile = __DIR__.'/../Resources/template.tpl';
         $template = file_get_contents($templateFile);
-        $code = strtr($template, [
+        $code = strtr($template, array(
             '%user%' => var_export($clearUser, true),
             '%opcode%' => var_export($clearOpcode, true)
-        ]);
+        ));
 
         if (!is_writable($file)) {
             throw new \RuntimeException(sprintf('"%s" is not writable', $file));
@@ -91,9 +91,9 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
         if ($container->getParameter('accelerator_cache.mode') == 'fopen') {
             $context = null;
             if (false === is_null($auth)) {
-                $context = stream_context_create(['http' => [
+                $context = stream_context_create(array('http' => array(
                     'header' => 'Authorization: Basic ' . base64_encode($auth),
-                ]]);
+                )));
             }
 
             $result = false;
@@ -114,11 +114,11 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             $ch = curl_init($url);
 
             $curlOpts = $container->getParameter('accelerator_cache.curl_opts');
-            curl_setopt_array($ch, array_replace($curlOpts, [
+            curl_setopt_array($ch, array_replace($curlOpts, array(
                 CURLOPT_HEADER => false,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_FAILONERROR => true
-            ]));
+            )));
 
             if (false === is_null($auth)) {
                 curl_setopt($ch, CURLOPT_USERPWD, $auth);
@@ -177,6 +177,6 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             }
         }
 
-        return ['success' => $success, 'message' => $message];
+        return array('success' => $success, 'message' => $message);
     }
 }
