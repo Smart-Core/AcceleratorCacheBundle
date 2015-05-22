@@ -23,9 +23,14 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('host')->defaultFalse()->end()
+                ->scalarNode('host')
+                    ->beforeNormalization()
+                        ->always(function ($v) { return $v && strncmp($v, 'http', 4) !== 0 ? 'http://' . $v : $v; })
+                    ->end()
+                    ->defaultNull()
+                ->end()
                 ->scalarNode('web_dir')->defaultValue('%kernel.root_dir%/../web')->end()
-                ->scalarNode('mode')->defaultValue('fopen')->end()
+                ->enumNode('mode')->values(array('fopen', 'curl'))->defaultValue('fopen')->end()
                 ->arrayNode('curl_opts')
                     ->validate()
                         ->always(function ($opts) {
