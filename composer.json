@@ -16,17 +16,20 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.1"
+        "symfony/framework-bundle": ">=2.1",
+        "symfony/console": ">=2.1"
     },
     "extra": {
         "branch-alias": {
-            "dev-1.0": "1.0.x-dev",
-            "dev-master": "1.1.x-dev"
+            "dev-master": "1.x-dev"
         }
     },
     "autoload": {
         "psr-4": {
             "SmartCore\\Bundle\\AcceleratorCacheBundle\\": ""
         }
+    },
+    "require-dev": {
+        "matthiasnoback/symfony-dependency-injection-test": "^0.7.3"
     }
 }
