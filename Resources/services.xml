@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="accelerator_cache.clearer" class="SmartCore\Bundle\AcceleratorCacheBundle\CacheClearerService">
+            <argument>%accelerator_cache.host%</argument>
+            <argument>%accelerator_cache.web_dir%</argument>
+            <argument>%accelerator_cache.template%</argument>
+            <argument>%accelerator_cache.mode%</argument>
+            <argument>%accelerator_cache.curl_opts%</argument>
+        </service>
+    </services>
+</container>

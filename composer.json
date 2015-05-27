@@ -16,8 +16,11 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": ">=2.1",
-        "symfony/console": ">=2.1"
+        "symfony/framework-bundle": ">=2.1"
+    },
+    "require-dev": {
+        "symfony/console": ">=2.1",
+        "matthiasnoback/symfony-dependency-injection-test": "^0.7.3"
     },
     "extra": {
         "branch-alias": {
@@ -28,8 +31,5 @@
         "psr-4": {
             "SmartCore\\Bundle\\AcceleratorCacheBundle\\": ""
         }
-    },
-    "require-dev": {
-        "matthiasnoback/symfony-dependency-injection-test": "^0.7.3"
     }
 }

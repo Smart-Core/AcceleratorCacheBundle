@@ -14,10 +14,13 @@ class AcceleratorCacheExtensionTest extends AbstractExtensionTestCase
     {
         $this->load();
 
-        $this->assertContainerBuilderHasParameter('accelerator_cache.host', null);
+        $this->assertContainerBuilderHasParameter('accelerator_cache.host', '%router.request_context.scheme%://%router.request_context.host%');
         $this->assertContainerBuilderHasParameter('accelerator_cache.web_dir', '%kernel.root_dir%/../web');
+        $this->assertContainerBuilderHasParameter('accelerator_cache.template');
+        $this->assertContains('die(json_encode(AcceleratorCacheClearer::clearCache(%%user%%, %%opcode%%)));', $this->container->getParameter('accelerator_cache.template'));
         $this->assertContainerBuilderHasParameter('accelerator_cache.mode', 'fopen');
         $this->assertContainerBuilderHasParameter('accelerator_cache.curl_opts', array());
+        $this->assertContainerBuilderHasService('accelerator_cache.clearer', 'SmartCore\Bundle\AcceleratorCacheBundle\CacheClearerService');
     }
 
     public function testHost()
@@ -38,11 +41,9 @@ class AcceleratorCacheExtensionTest extends AbstractExtensionTestCase
     {
         $this->load(array(
             'mode' => 'curl',
-            'curl_opts' => array('CURLOPT_SSL_VERIFYPEER' => false)
+            'curl_opts' => array('CURLOPT_SSL_VERIFYPEER' => false),
         ));
 
-        $this->assertContainerBuilderHasParameter('accelerator_cache.host', null);
-        $this->assertContainerBuilderHasParameter('accelerator_cache.web_dir', '%kernel.root_dir%/../web');
         $this->assertContainerBuilderHasParameter('accelerator_cache.mode', 'curl');
         $this->assertContainerBuilderHasParameter('accelerator_cache.curl_opts', array(CURLOPT_SSL_VERIFYPEER => false));
     }
@@ -61,8 +62,7 @@ class AcceleratorCacheExtensionTest extends AbstractExtensionTestCase
     public function testInvalidCurlOption()
     {
         $this->load(array(
-            'web_dir' => 'foobar',
-            'curl_opts' => array('FOO' => false)
+            'curl_opts' => array('FOO' => false),
         ));
     }
 

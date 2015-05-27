@@ -39,7 +39,7 @@ class ScriptHandler extends SymfonyScriptHandler
 
         $auth = '';
         if (array_key_exists('accelerator-cache-auth', $options)) {
-            $auth .= ' --auth '.  escapeshellarg($options['accelerator-cache-auth']);
+            $auth .= ' --auth '.escapeshellarg($options['accelerator-cache-auth']);
         }
 
         static::executeCommand($event, $appDir, 'cache:accelerator:clear'.$opcode.$user.$cli.$auth, $options['process-timeout']);
