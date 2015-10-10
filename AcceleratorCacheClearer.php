@@ -48,11 +48,11 @@ class AcceleratorCacheClearer
      */
     private static function clearUserCache()
     {
-        if (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '>=') && apc_clear_cache()) {
+        if (function_exists('apc_clear_cache') && function_exists('opcache_reset') && apc_clear_cache()) {
             return 'APC User Cache: success.';
         }
 
-        if (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '<') && apc_clear_cache('user')) {
+        if (function_exists('apc_clear_cache') && apc_clear_cache('user')) {
             return 'APC User Cache: success.';
         }
 
@@ -72,7 +72,7 @@ class AcceleratorCacheClearer
             return 'Zend OPcache: success.';
         }
 
-        if (function_exists('apc_clear_cache') && version_compare(PHP_VERSION, '5.5.0', '<') && apc_clear_cache('opcode')) {
+        if (function_exists('apc_clear_cache') && apc_clear_cache('opcode')) {
             return 'APC Opcode Cache: success.';
         }
 
