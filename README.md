@@ -92,7 +92,7 @@ Clear the CLI cache (opcode+user):
 
 
 Composer usage
-+==============
+==============
 
 To automatically clear accelerator cache after each composer install / composer update, you can add a script handler to your project's composer.json :
 
