@@ -16,9 +16,13 @@ class ScriptHandler extends SymfonyScriptHandler
     {
         $options = parent::getOptions($event);
         //$consoleDir = parent::getConsoleDir($event, 'clear the PHP Accelerator cache');
-        $appDir = $options['symfony-app-dir'];
+        if (isset($options['symfony-bin-dir'])) {
+            $binDir = $options['symfony-bin-dir'];
+        } else {
+            $binDir = $options['symfony-app-dir'];
+        }
 
-        if (null === $appDir) {
+        if (null === $binDir) {
             return;
         }
 
@@ -43,7 +47,7 @@ class ScriptHandler extends SymfonyScriptHandler
         }
 
         try {
-            static::executeCommand($event, $appDir, 'cache:accelerator:clear'.$opcode.$user.$cli.$auth, $options['process-timeout']);
+            static::executeCommand($event, $binDir, 'cache:accelerator:clear'.$opcode.$user.$cli.$auth, $options['process-timeout']);
         } catch (\RuntimeException $e) {
             $event->getIO()->write('<error>'.$e->getMessage().'</error>');
         }
