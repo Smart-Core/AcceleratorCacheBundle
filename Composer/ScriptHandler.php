@@ -2,7 +2,7 @@
 
 namespace SmartCore\Bundle\AcceleratorCacheBundle\Composer;
 
-use Composer\Script\CommandEvent;
+use Composer\Script\Event;
 use Sensio\Bundle\DistributionBundle\Composer\ScriptHandler as SymfonyScriptHandler;
 
 class ScriptHandler extends SymfonyScriptHandler
@@ -10,9 +10,9 @@ class ScriptHandler extends SymfonyScriptHandler
     /**
      * Clears the APC/Wincache/Opcache cache.
      *
-     * @param $event CommandEvent A instance
+     * @param $event Event A instance
      */
-    public static function clearCache(CommandEvent $event)
+    public static function clearCache(Event $event)
     {
         $options = parent::getOptions($event);
         //$consoleDir = parent::getConsoleDir($event, 'clear the PHP Accelerator cache');
