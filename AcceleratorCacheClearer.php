@@ -60,6 +60,15 @@ class AcceleratorCacheClearer
             return 'APC User Cache: success.';
         }
 
+        if (function_exists('xcache_clear_cache')) {
+            $cnt = xcache_count(XC_TYPE_VAR);
+            for ($i=0; $i < $cnt; $i++) {
+                xcache_clear_cache(XC_TYPE_VAR, $i);
+            }
+
+            return 'XCache User Cache: success.';
+        }
+
         if (function_exists('wincache_ucache_clear') && wincache_ucache_clear()) {
             return 'Wincache User Cache: success.';
         }
@@ -78,6 +87,15 @@ class AcceleratorCacheClearer
 
         if (function_exists('apc_clear_cache') && apc_clear_cache('opcode')) {
             return 'APC Opcode Cache: success.';
+        }
+
+        if (function_exists('xcache_clear_cache')) {
+            $cnt = xcache_count(XC_TYPE_PHP);
+            for ($i=0; $i < $cnt; $i++) {
+                xcache_clear_cache(XC_TYPE_PHP, $i);
+            }
+
+            return 'XCache Opcode Cache: success.';
         }
 
         throw new \RuntimeException('Opcode Cache: failure.');
