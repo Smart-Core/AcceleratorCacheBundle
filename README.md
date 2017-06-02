@@ -20,56 +20,55 @@ Installation
 
   1. Add it to your composer.json:
 
-    ```json
-    {
-      "require": {
-          "smart-core/accelerator-cache-bundle": "dev-master"
-      }
+```json
+{
+    "require": {
+        "smart-core/accelerator-cache-bundle": "dev-master"
     }
-    ```
+}
+```
 
     or:
 
-    ```sh
-      composer require smart-core/accelerator-cache-bundle
-      composer update smart-core/accelerator-cache-bundle
-    ```
+```sh
+composer require smart-core/accelerator-cache-bundle
+composer update smart-core/accelerator-cache-bundle
+```
 
   2. Add this bundle to your application kernel:
 
-    ```php
-     // app/AppKernel.php
-     public function registerBundles()
-     {
-         return array(
-             // ...
-             new SmartCore\Bundle\AcceleratorCacheBundle\AcceleratorCacheBundle(),
-             // ...
-         );
-     }
-    ```
+```php
+// app/AppKernel.php
+public function registerBundles()
+{
+    return array(
+        // ...
+        new SmartCore\Bundle\AcceleratorCacheBundle\AcceleratorCacheBundle(),
+        // ...
+    );
+}
+```
 
   3. Configure `accelerator_cache` service:
 
-    ```yml
-    # app/config/config.yml
-    accelerator_cache:
-        host: http://example.com
-        web_dir: %kernel.root_dir%/../web
-    ```
+```yml
+# app/config/config.yml
+accelerator_cache:
+    host: http://example.com
+    web_dir: %kernel.root_dir%/../web
+```
 
   4. If you want to use curl rather than fopen set the following option:
 
-    ```yml
-    # app/config/config.yml
-    accelerator_cache:
-        ...
-        mode: curl
-    #   additional options can be passed to the command
-    #   curl_opts:
-    #       CURLOPT_*: custom_value
-
-    ```
+```yml
+# app/config/config.yml
+accelerator_cache:
+    ...
+    mode: curl
+#   additional options can be passed to the command
+#   curl_opts:
+#       CURLOPT_*: custom_value
+```
 
 Usage
 =====
