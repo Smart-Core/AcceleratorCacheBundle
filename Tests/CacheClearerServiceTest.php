@@ -8,7 +8,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class CacheClearerServiceTest extends \PHPUnit_Framework_TestCase
+class CacheClearerServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @expectedException \RuntimeException

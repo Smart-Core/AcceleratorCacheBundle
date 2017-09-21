@@ -12,5 +12,10 @@
             <argument>%accelerator_cache.mode%</argument>
             <argument>%accelerator_cache.curl_opts%</argument>
         </service>
+
+        <service id="accelerator_cache.command" class="SmartCore\Bundle\AcceleratorCacheBundle\Command\AcceleratorCacheClearCommand">
+            <argument type="service" id="accelerator_cache.clearer" />
+            <tag name="console.command" />
+        </service>
     </services>
 </container>

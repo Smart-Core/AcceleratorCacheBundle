@@ -17,12 +17,12 @@
     ],
     "require": {
         "symfony/framework-bundle": ">=2.1",
-        "sensio/distribution-bundle": ">=2.1"
+        "symfony/console": ">=2.1"
     },
     "require-dev": {
         "composer/composer": "1.0.*@dev",
-        "symfony/console": ">=2.1",
-        "matthiasnoback/symfony-dependency-injection-test": "^0.7.3"
+        "phpunit/phpunit": "~6.3",
+        "matthiasnoback/symfony-dependency-injection-test": "~2.1"
     },
     "extra": {
         "branch-alias": {

@@ -7,7 +7,7 @@ use SmartCore\Bundle\AcceleratorCacheBundle\AcceleratorCacheClearer;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class AcceleratorCacheClearerTest extends \PHPUnit_Framework_TestCase
+class AcceleratorCacheClearerTest extends \PHPUnit\Framework\TestCase
 {
     public function testClearCache()
     {

@@ -9,28 +9,22 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class AcceleratorCacheClearCommandTest extends \PHPUnit_Framework_TestCase
+class AcceleratorCacheClearCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testClearCache()
     {
-        $cacheClearer = $this->getMock('SmartCore\Bundle\AcceleratorCacheBundle\CacheClearerService', array(), array(), '', false);
+        $cacheClearer = $this->createCacheClearer();
         $cacheClearer->expects($this->once())
             ->method('clearCache')
             ->with(true, true)
             ->willReturn(array('success' => true, 'message' => 'foobar'));
 
-        $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
-        $container->expects($this->once())
-            ->method('get')
-            ->with('accelerator_cache.clearer')
-            ->willReturn($cacheClearer);
-
-        $this->assertContains('(Web) foobar', $this->createCommandTester(array(), $container)->getDisplay());
+        $this->assertContains('(Web) foobar', $this->createCommandTester($cacheClearer, array())->getDisplay());
     }
 
     public function testCliClearUser()
     {
-        $commandTester = $this->createCommandTester(array('--cli' => true, '--user' => true));
+        $commandTester = $this->createCommandTester($this->createCacheClearer(), array('--cli' => true, '--user' => true));
 
         $this->assertContains('(cli) Clear PHP Accelerator Cache... APC User Cache: success.', $commandTester->getDisplay());
     }
@@ -38,21 +32,23 @@ class AcceleratorCacheClearCommandTest extends \PHPUnit_Framework_TestCase
     public function testCliClearOpcode()
     {
         if (PHP_VERSION_ID >= 50500) {
-            $this->setExpectedException('\RuntimeException', 'Clear PHP Accelerator Cache... Opcode Cache: failure.');
-            $this->createCommandTester(array('--cli' => true, '--opcode' => true));
+            $this->expectException('\RuntimeException');
+            $this->expectExceptionMessage('Clear PHP Accelerator Cache... Opcode Cache: failure.');
+            $this->createCommandTester($this->createCacheClearer(), array('--cli' => true, '--opcode' => true));
         } else {
             $commandTester = $this->createCommandTester(array('--cli' => true, '--opcode' => true));
             $this->assertContains('(cli) Clear PHP Accelerator Cache... APC Opcode Cache: success.', $commandTester->getDisplay());
         }
     }
 
-    private function createCommandTester(array $options = array(), $container = null)
+    private function createCacheClearer()
     {
-        $command = new AcceleratorCacheClearCommand();
+        return $this->createMock('SmartCore\Bundle\AcceleratorCacheBundle\CacheClearerService');
+    }
 
-        if ($container) {
-            $command->setContainer($container);
-        }
+    private function createCommandTester($cacheClearer, array $options = array())
+    {
+        $command = new AcceleratorCacheClearCommand($cacheClearer);
 
         $application = new Application();
         $application->add($command);
