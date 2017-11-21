@@ -48,6 +48,10 @@ class AcceleratorCacheClearer
      */
     private static function clearUserCache()
     {
+        if (function_exists('wincache_ucache_clear') && wincache_ucache_clear()) {
+            return 'Wincache User Cache: success.';
+        }
+
         if (function_exists('apcu_clear_cache') && apcu_clear_cache()) {
             return 'APC User Cache: success.';
         }
@@ -69,11 +73,7 @@ class AcceleratorCacheClearer
             return 'XCache User Cache: success.';
         }
 
-        if (function_exists('wincache_ucache_clear') && wincache_ucache_clear()) {
-            return 'Wincache User Cache: success.';
-        }
-
-        throw new \RuntimeException('User Cache: failure.');
+        return 'User Cache: failure.';
     }
 
     /**
@@ -98,6 +98,6 @@ class AcceleratorCacheClearer
             return 'XCache Opcode Cache: success.';
         }
 
-        throw new \RuntimeException('Opcode Cache: failure.');
+        return 'Opcode Cache: failure.';
     }
 }
