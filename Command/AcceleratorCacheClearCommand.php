@@ -3,13 +3,26 @@
 namespace SmartCore\Bundle\AcceleratorCacheBundle\Command;
 
 use SmartCore\Bundle\AcceleratorCacheBundle\AcceleratorCacheClearer;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use SmartCore\Bundle\AcceleratorCacheBundle\CacheClearerService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AcceleratorCacheClearCommand extends ContainerAwareCommand
+class AcceleratorCacheClearCommand extends Command
 {
+    /**
+     * @var CacheClearerService
+     */
+    private $cacheClearer;
+
+    public function __construct(CacheClearerService $cacheClearer)
+    {
+        parent::__construct(null);
+
+        $this->cacheClearer = $cacheClearer;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -38,8 +51,7 @@ class AcceleratorCacheClearCommand extends ContainerAwareCommand
             $type = 'cli';
             $result = AcceleratorCacheClearer::clearCache($clearUser, $clearOpcode);
         } else {
-            $result = $this->getContainer()->get('accelerator_cache.clearer')
-                ->clearCache($clearUser, $clearOpcode, $input->getOption('auth'));
+            $result = $this->cacheClearer->clearCache($clearUser, $clearOpcode, $input->getOption('auth'));
         }
 
         if (!$result['success']) {
