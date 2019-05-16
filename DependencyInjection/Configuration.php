@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->defaultNull()
                 ->end()
-                ->scalarNode('web_dir')->defaultValue('%kernel.root_dir%/../web')->end()
+                ->scalarNode('web_dir')->defaultValue('%kernel.project_dir%/web')->end()
                 ->enumNode('mode')
                     ->values(array(CacheClearerService::MODE_FOPEN, CacheClearerService::MODE_CURL))
                     ->defaultValue(CacheClearerService::MODE_FOPEN)

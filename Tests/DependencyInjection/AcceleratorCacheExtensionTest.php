@@ -15,7 +15,7 @@ class AcceleratorCacheExtensionTest extends AbstractExtensionTestCase
         $this->load();
 
         $this->assertContainerBuilderHasParameter('accelerator_cache.host', '%router.request_context.scheme%://%router.request_context.host%');
-        $this->assertContainerBuilderHasParameter('accelerator_cache.web_dir', '%kernel.root_dir%/../web');
+        $this->assertContainerBuilderHasParameter('accelerator_cache.web_dir', '%kernel.project_dir%/web');
         $this->assertContainerBuilderHasParameter('accelerator_cache.template');
         $this->assertContains('die(json_encode(AcceleratorCacheClearer::clearCache(%%user%%, %%opcode%%)));', $this->container->getParameter('accelerator_cache.template'));
         $this->assertContainerBuilderHasParameter('accelerator_cache.mode', 'fopen');

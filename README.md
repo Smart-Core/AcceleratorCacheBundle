@@ -55,7 +55,7 @@ public function registerBundles()
 # app/config/config.yml
 accelerator_cache:
     host: http://example.com
-    web_dir: %kernel.root_dir%/../web
+    web_dir: %kernel.project_dir%/web
 ```
 
   4. If you want to use curl rather than fopen set the following option:
