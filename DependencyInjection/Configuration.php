@@ -20,7 +20,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('host')
                     ->beforeNormalization()
-                        ->always(function ($v) { return $v && strncmp($v, 'http', 4) !== 0 ? 'http://'.$v : $v; })
+                        ->always(function ($v) { return $v && strncmp($v, 'http', 4) !== 0 && strncmp($v, 'env_', 4) !== 0 ? 'http://'.$v : $v; })
                     ->end()
                     ->defaultNull()
                 ->end()
